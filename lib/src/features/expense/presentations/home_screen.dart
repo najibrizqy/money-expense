@@ -73,20 +73,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       'Jangan lupa catat keuanganmu setiap hari!',
                       style: getGrayTextStyle(),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ExpenseCardWidget(
-                          title: 'Pengeluaran \nhari ini',
-                          amount: '30.000',
-                          backgroundColor: ColorManager.primary,
-                        ),
-                        ExpenseCardWidget(
-                          title: 'Pengeluaran \nbulan ini',
-                          amount: '350.000',
-                          backgroundColor: ColorManager.teal,
-                        ),
-                      ],
+                    IntrinsicHeight(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ExpenseCardWidget(
+                            title: 'Pengeluaran \nhari ini',
+                            amount: '30.000',
+                            backgroundColor: ColorManager.primary,
+                          ),
+                          ExpenseCardWidget(
+                            title: 'Pengeluaran \nbulan ini',
+                            amount: '90.000',
+                            backgroundColor: ColorManager.teal,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
