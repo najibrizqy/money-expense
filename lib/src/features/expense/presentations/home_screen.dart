@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:money_expense/src/common_widgets/category_card_widget.dart';
 import 'package:money_expense/src/common_widgets/expense_card_widget.dart';
 import 'package:money_expense/src/common_widgets/history_card_widget.dart';
+import 'package:money_expense/src/features/expense/domain/expense.dart';
 import 'package:money_expense/src/features/expense/presentations/add_expense_screen.dart';
+import 'package:money_expense/src/services/database_helper.dart';
 import 'package:money_expense/src/theme_manager/color_manager.dart';
 import 'package:money_expense/src/theme_manager/font_manager.dart';
 import 'package:money_expense/src/theme_manager/style_manager.dart';
+import 'package:money_expense/src/utils/category.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/home';
@@ -16,6 +19,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late Future<List<Expense>> _expenseList;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshExpenseList();
+  }
+
+  void _refreshExpenseList() {
+    setState(() {
+      _expenseList = DatabaseHelper().queryAllExpenses();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorManager.primary,
         onPressed: () {
-          Navigator.pushNamed(context, AddExpenseScreen.routeName);
+          Navigator.pushNamed(context, AddExpenseScreen.routeName)
+              .then((value) {
+            _refreshExpenseList();
+          });
         },
         shape: const StadiumBorder(),
         child: const Icon(Icons.add, color: Colors.white, size: 28),
@@ -65,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           title: 'Pengeluaran \nbulan ini',
                           amount: '350.000',
                           backgroundColor: ColorManager.teal,
-                        )
+                        ),
                       ],
                     ),
                   ],
@@ -136,15 +156,48 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     HistoryCardWidget(
                       title: 'Ayam Geprek',
-                      amount: '15.000',
+                      amount: 15000,
                       iconColor: ColorManager.yellow,
                       images: 'assets/images/food.png',
                     ),
                     HistoryCardWidget(
                       title: 'Gojek',
-                      amount: '15.000',
+                      amount: 15000,
                       iconColor: ColorManager.purple,
                       images: 'assets/images/car.png',
+                    ),
+                    FutureBuilder<List<Expense>>(
+                      future: _expenseList,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return const SizedBox.shrink();
+                        } else {
+                          // Mapping the list of expenses to a list of widgets
+                          List<Widget> expenseWidgets =
+                              snapshot.data!.map((expense) {
+                            return HistoryCardWidget(
+                              title: expense.name,
+                              amount: expense.amount,
+                              iconColor:
+                                  getColorBasedOnCategory(expense.category),
+                              images:
+                                  getImagesBasedOnCategory(expense.category),
+                            );
+                          }).toList();
+
+                          return Column(
+                            children: expenseWidgets,
+                          );
+                        }
+                      },
                     ),
                     const SizedBox(height: 30),
                     Text(
@@ -155,13 +208,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     HistoryCardWidget(
                       title: 'Paket Data',
-                      amount: '50.000',
+                      amount: 50000,
                       iconColor: ColorManager.blue3,
                       images: 'assets/images/internet.png',
                     ),
                     HistoryCardWidget(
                       title: 'Gojek',
-                      amount: '15.000',
+                      amount: 15000,
                       iconColor: ColorManager.purple,
                       images: 'assets/images/car.png',
                     ),

@@ -6,6 +6,7 @@ import 'package:money_expense/src/theme_manager/color_manager.dart';
 import 'package:money_expense/src/theme_manager/theme_data_manager.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

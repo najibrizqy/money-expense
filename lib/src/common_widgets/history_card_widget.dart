@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:money_expense/src/theme_manager/color_manager.dart';
 import 'package:money_expense/src/theme_manager/font_manager.dart';
 import 'package:money_expense/src/theme_manager/style_manager.dart';
 
 class HistoryCardWidget extends StatelessWidget {
   final String title;
-  final String amount;
+  final int amount;
   final Color iconColor;
   final String images;
   const HistoryCardWidget({
@@ -53,7 +54,9 @@ class HistoryCardWidget extends StatelessWidget {
                   style: getBlackTextStyle(),
                 ),
                 Text(
-                  'Rp. $amount',
+                  NumberFormat.currency(
+                          locale: 'id', decimalDigits: 0, symbol: 'Rp ')
+                      .format(amount),
                   style: getBlackTextStyle(
                     fontWeight: FontWeighManager.semiBold,
                   ),

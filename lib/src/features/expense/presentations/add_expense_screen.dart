@@ -4,6 +4,8 @@ import 'package:jiffy/jiffy.dart';
 import 'package:money_expense/src/common_widgets/app_bar_widget.dart';
 import 'package:money_expense/src/common_widgets/category_modal_widget.dart';
 import 'package:money_expense/src/features/expense/domain/category.dart';
+import 'package:money_expense/src/features/expense/domain/expense.dart';
+import 'package:money_expense/src/services/database_helper.dart';
 import 'package:money_expense/src/theme_manager/color_manager.dart';
 import 'package:money_expense/src/theme_manager/font_manager.dart';
 import 'package:money_expense/src/theme_manager/style_manager.dart';
@@ -77,6 +79,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
   }
 
+  _saveExpense() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      Expense expense = Expense(
+        name: _expenseNameController.text,
+        category: _selectedCategory.title,
+        date: _selectedDate,
+        amount:
+            int.parse(_amountController.text.replaceAll('.', '').split(' ')[1]),
+      );
+      await DatabaseHelper().insertExpense(expense.toMap());
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,7 +155,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                               context: context,
                               initialDate: DateTime.now(),
                               firstDate: DateTime(2000),
-                              lastDate: DateTime(2101),
+                              lastDate: DateTime.now(),
                             );
                             if (pickedDate != null) {
                               String date =
@@ -194,7 +211,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                             style: _isButtonEnabled()
                                 ? btnPrimaryStyle
                                 : btnDisabledStyle,
-                            onPressed: () {},
+                            onPressed: () {
+                              if (_isButtonEnabled()) {
+                                _saveExpense();
+                              }
+                            },
                             child: Text(
                               'Simpan',
                               style: getWhiteTextStyle(
