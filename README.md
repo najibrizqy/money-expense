@@ -2,6 +2,9 @@
 
 A new Flutter project.
 
+## Download The Apk
+  You can download the apk [here](https://drive.google.com/file/d/1rPytslI0dhjeQloNy2tNTxJv4-nC5MNe/view?usp=sharing)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
